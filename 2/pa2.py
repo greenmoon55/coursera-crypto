@@ -13,7 +13,6 @@ c3 = '69dda8455c7dd4254bf353b773304eec0ec7702330098ce7f7520d1cbbb20fc388d1b0adb5
 k4 = '36f18357be4dbd77f050515c73fcf9f2'
 c4 = '770b80259ec33beb2561358a9f2dc617e46218c0a53cbeca695ae45faa8952aa0e311bde9d4e01726d3184c34451'
 
-
 def hex_to_byte(hexstr):
     bytes = []
     for i in range(0, len(hexstr), 2):
@@ -55,8 +54,22 @@ class AESCipher:
         self.key = self._hex_to_byte(key)
         self.obj = AES.new(self.key)
 
-    def encrypt(self, pt, mode):
-        raise Exception('Not implemented yet!')
+    def encrypt(self, pt, iv, mode):
+        ct = [iv]
+        if mode == self.CBC:
+            prev = iv
+            for i in xrange(0, len(pt), 16):
+                cur_pt = self._xor(pt[i: i + 16], prev)
+                temp_ct = self.obj.encrypt(cur_pt)
+                prev = temp_ct
+                ct.append(temp_ct)
+        elif mode == self.CTR:
+            counter = Counter.new(128, initial_value=int(iv.encode('hex'), 16))
+            for i in xrange(0, len(pt), 16):
+                temp_ct = self.obj.encrypt(counter())
+                temp_ct = self._xor(temp_ct, pt[i: i + 16])
+                ct.append(temp_ct)
+        return ''.join(ct).encode('hex')
 
     def decrypt(self, ct, mode):
         pt = []
@@ -78,11 +91,21 @@ class AESCipher:
 
 cipher1 = AESCipher(k1)
 cipher2 = AESCipher(k2)
-print cipher1.decrypt(c1, AESCipher.CBC)
-print cipher2.decrypt(c2, AESCipher.CBC)
+a1 = cipher1.decrypt(c1, AESCipher.CBC)
+print a1
+print cipher1.encrypt(a1, hex_to_byte(c1)[:16], AESCipher.CBC)
+
+a2 = cipher2.decrypt(c2, AESCipher.CBC)
+print a2
 print cipher2.decrypt(c2, AESCipher.CBC).encode('hex')
+print cipher2.encrypt(a2, hex_to_byte(c2)[:16], AESCipher.CBC)
 
 cipher3 = AESCipher(k3)
-print cipher3.decrypt(c3, AESCipher.CTR)
+a3 = cipher3.decrypt(c3, AESCipher.CTR)
+print a3
+print cipher3.encrypt(a3, hex_to_byte(c3)[:16], AESCipher.CTR)
+
 cipher4 = AESCipher(k4)
-print cipher4.decrypt(c4, AESCipher.CTR)
+a4 = cipher4.decrypt(c4, AESCipher.CTR)
+print a4
+print cipher4.encrypt(a4, hex_to_byte(c4)[:16], AESCipher.CTR)
