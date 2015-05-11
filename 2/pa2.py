@@ -55,10 +55,15 @@ class AESCipher:
         self.obj = AES.new(self.key)
 
     def encrypt(self, pt, iv, mode):
+        pt = pt[:]
         ct = [iv]
         if mode == self.CBC:
             prev = iv
             for i in xrange(0, len(pt), 16):
+                if i + 16 >= len(pt):
+                    pad_size = i + 16 - len(pt)
+                    for _ in xrange(pad_size):
+                        pt += chr(pad_size)
                 cur_pt = self._xor(pt[i: i + 16], prev)
                 temp_ct = self.obj.encrypt(cur_pt)
                 prev = temp_ct
@@ -80,6 +85,9 @@ class AESCipher:
                 temp_pt = self.obj.decrypt(ct[i:i + 16])
                 temp_pt = self._xor(temp_pt, ct[i - 16: i])
                 pt.append(temp_pt)
+            pt = ''.join(pt)
+            pad_size = ord(pt[-1])
+            pt = pt[:len(pt) - pad_size]
         elif mode == self.CTR:
             counter = Counter.new(128, initial_value=int(ct[:32], 16))
             ct = self._hex_to_byte(ct)
@@ -87,7 +95,9 @@ class AESCipher:
                 temp_pt = self.obj.encrypt(counter())
                 temp_pt = self._xor(temp_pt, ct[i: i + 16])
                 pt.append(temp_pt)
-        return ''.join(pt)
+            pt = ''.join(pt)
+        # import ipdb; ipdb.set_trace()
+        return pt
 
 cipher1 = AESCipher(k1)
 cipher2 = AESCipher(k2)
