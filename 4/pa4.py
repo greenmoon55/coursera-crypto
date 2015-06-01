@@ -63,14 +63,16 @@ class PaddingOracle(object):
     def attack(self):
         for i in range(len(self.ct)):
             block = self.iv
+            pt_block = ''
             for j in range(1, 17):
                 for guess in """ etoanihsrdluwmycgf,bp.kv'"I-T;_HAWMSB!j?ExLCDzPJNq:YOGRFU1XK*V()Q/023548697][$@Z#%&+<=>\^`{|}~""":
                     if self._query_block(self._generate_block(guess, j, block), i):
                         s = list(block)
                         s[16 - j] = chr(ord(guess) ^ ord(s[16 - j]))
                         block = ''.join(s)
+                        pt_block = guess + pt_block
                         break
-            self.pt += block
+            self.pt += pt_block
             print self.pt.encode('hex')
             print self.pt
             sleep(10)
