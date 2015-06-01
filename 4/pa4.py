@@ -1,4 +1,5 @@
 import urllib2
+from time import sleep
 
 TARGET = 'http://crypto-class.appspot.com/po?er='
 
@@ -70,8 +71,9 @@ class PaddingOracle(object):
                         block = ''.join(s)
                         break
             self.pt += block
-            for b in self.pt:
-                print b.encode('hex')
+            print self.pt.encode('hex')
+            print self.pt
+            sleep(10)
 
 
 if __name__ == "__main__":
