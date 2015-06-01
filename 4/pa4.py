@@ -63,7 +63,7 @@ class PaddingOracle(object):
     def attack(self):
         for i in range(len(self.ct)):
             block = self.iv
-            for j in range(1, 16):
+            for j in range(1, 17):
                 for guess in xrange(256):
                     if self._query_block(self._generate_block(chr(guess), j, block), i):
                         s = list(block)
