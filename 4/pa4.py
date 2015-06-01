@@ -66,7 +66,7 @@ class PaddingOracle(object):
                 for guess in xrange(256):
                     if self._query_block(self._generate_block(chr(guess), j, block), i):
                         s = list(block)
-                        s[16 - j] = chr(guess ^ s[16 - j])
+                        s[16 - j] = chr(guess ^ ord(s[16 - j]))
                         block = ''.join(s)
                         break
             self.pt += block
