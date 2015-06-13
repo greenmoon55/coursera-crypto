@@ -1,5 +1,7 @@
 # coursera-crypto
 
-This is a collection of my solutions programming assignments.
+https://www.coursera.org/course/crypto
 
-*Please complele the assignments on your own.*
+This is a collection of my solutions for programming assignments.
+
+**Please complele the assignments on your own.**
