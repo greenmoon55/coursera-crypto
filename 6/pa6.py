@@ -1,25 +1,7 @@
 from gmpy2 import mpz
-from gmpy2 import divm
 from gmpy2 import isqrt
 from gmpy2 import powmod
 from gmpy2 import invert
-
-
-def dlog(prime, g, h):
-    CONST_2_20 = 2 ** 20
-    h_x1 = {}
-    for x1 in xrange(CONST_2_20 + 1):
-        val = divm(h, powmod(g, x1, prime), prime)
-        h_x1[val] = x1
-    gb = powmod(g, CONST_2_20, prime)
-    for x0 in xrange(CONST_2_20 + 1):
-        val = powmod(gb, x0, prime)
-        if val in h_x1:
-            x1 = h_x1[val]
-            x = x0 * CONST_2_20 + x1
-            print x
-            break
-
 
 
 if __name__ == "__main__":
